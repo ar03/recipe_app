@@ -1,4 +1,5 @@
 import Search from './models/Search';
+import Recipe from './models/Recipe';
 import * as searchView from './views/searchView'
 import { elements, renderLoader, clearLoader } from './views/base';
 
@@ -10,6 +11,7 @@ import { elements, renderLoader, clearLoader } from './views/base';
  */
 const state = {}
 
+/* Search Controller */
 const controlSearch = async () => {
     // 1) Get query from view
     const query = searchView.getInput();//ToDo
@@ -45,7 +47,28 @@ elements.searchResPages.addEventListener('click', e => {
     }
 });
 
+/* Recipe Controller */
+const controlRecipe = async () => {
+    // Get ID from url
+    const id = window.location.hash.replace('#', '');
+    console.log(id);
 
+    if (id) {
+        // Prepare UI for changes
+
+        // Create new recipe object
+        state.recipe = new Recipe(id);
+        // Get recipe data
+        await state.recipe.getRecipe();
+        // Calc servings and time
+        state.recipe.calcTime();
+        state.recipe.calcServings();
+        // Render recipe
+        console.log(state.recipe);
+    }
+};
+
+['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
 
 
 // http://food2fork.com/api/search
